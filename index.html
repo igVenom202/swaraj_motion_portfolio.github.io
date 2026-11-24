@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swaraj Kumar Padhi — Solar EPC &amp; Data Automation Dossier</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            canvas: '#050505',
+            surface: '#0B0B0B',
+            hairline: '#222222',
+            hairlineHover: '#3A3A3A',
+            ink: '#F4F4F0',
+            muted: '#8E8E93',
+            sage: '#A3B8AE',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      background-color: #050505;
+      color: #F4F4F0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+      overflow-x: hidden;
+    }
+    .font-mono-label {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .hairline-box {
+      border: 1px solid #222222;
+      background-color: rgba(5, 5, 5, 0.78);
+      backdrop-filter: blur(2px);
+    }
+    /* Background Black Hole & Tech Orbital Canvas */
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.92;
+    }
+    /* Cursor-following spotlight */
+    #cursorGlow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 30%), rgba(163, 184, 174, 0.075), transparent 65%);
+      transition: opacity 0.3s ease;
+    }
+    /* Preloader curtain */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background-color: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.45s ease;
+    }
+    #preloader.done {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* Page view transitions */
+    .page-view {
+      display: none;
+    }
+    .page-view.active {
+      display: block;
+      animation: pageEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Kinetic Mission / Blog / Experience Row */
+    .mission-row {
+      position: relative;
+      border-bottom: 1px solid #222222;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+    .mission-row::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: #A3B8AE;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mission-row:hover {
+      background-color: rgba(255, 255, 255, 0.025);
+    }
+    .mission-row:hover::before {
+      transform: scaleY(1);
+    }
+    .mission-row:hover .row-index {
+      color: #A3B8AE;
+      transform: translateX(3px);
+    }
+    .row-index {
+      display: inline-block;
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-link.active {
+      color: #F4F4F0;
+    }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 1px;
+      background-color: #F4F4F0;
+    }
+    .filter-btn {
+      border: 1px solid #222222;
+      background-color: rgba(5, 5, 5, 0.85);
+      color: #9CA3AF;
+      transition: all 0.18s ease;
+    }
+    .filter-btn:hover {
+      border-color: #52525B;
+      color: #F4F4F0;
+    }
+    .filter-btn.active {
+      background-color: #F4F4F0;
+      color: #050505;
+      border-color: #F4F4F0;
+      font-weight: 600;
+    }
+    .stage-tab {
+      border: 1px solid #222222;
+      background-color: rgba(10, 10, 10, 0.8);
+      transition: all 0.2s ease;
+    }
+    .stage-tab:hover {
+      border-color: #4B5563;
+      transform: translateY(-1px);
+    }
+    .stage-tab.active {
+      background-color: #F4F4F0;
+      color: #050505;
+      border-color: #F4F4F0;
+    }
+    .stage-tab.active .stage-eyebrow {
+      color: #4B5563;
+    }
+    /* Animated SVG & Telemetry Graphics */
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -28; }
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.45; transform: scale(0.92); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+    .spin-slow {
+      transform-origin: center;
+      animation: spinSlow 24s linear infinite;
+    }
+    .flow-line {
+      stroke-dasharray: 5 5;
+      animation: dashFlow 1.4s linear infinite;
+    }
+    .pulse-node {
+      transform-origin: center;
+      animation: pulseDot 2.2s ease-in-out infinite;
+    }
+    .telemetry-bar-fill {
+      transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(4px);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-panel {
+      animation: modalIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .spin-slow, .flow-line, .pulse-node { animation: none; }
+      .page-view.active { animation: none; }
+      #preloader { display: none; }
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: #27272A; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+  </style>
+</head>
+<body class="antialiased selection:bg-ink selection:text-canvas">
+
+  <!-- SLX-Style Boot Preloader -->
+  <div id="preloader" aria-hidden="true">
+    <div class="w-64 space-y-3">
+      <div class="flex items-center justify-between font-mono-label text-[10px] text-sage">
+        <span>SWARAJ_PADHI // EPC</span>
+        <span id="loaderPct">000%</span>
+      </div>
+      <div class="h-[2px] w-full bg-hairline overflow-hidden">
+        <div id="loaderBar" class="h-full bg-ink w-0 transition-all duration-75"></div>
+      </div>
+      <div class="font-mono text-[10px] text-muted">INITIALIZING MULTI-PAGE DOSSIER...</div>
+    </div>
+  </div>
+
+  <!-- Animated Black Hole & Gravitational Telemetry Background -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <!-- Cursor-Following Radial Spotlight -->
+  <div id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- Sticky Top Navigation (Multi-Page SPA) -->
+  <header class="sticky top-0 z-40 border-b border-hairline bg-canvas/95 backdrop-blur-md">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
+      <button type="button" class="flex items-center gap-3 group text-left page-nav-trigger" data-page="about" aria-label="Swaraj Kumar Padhi Home">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" class="text-ink transition-transform duration-300 group-hover:rotate-90">
+          <rect x="0.75" y="0.75" width="26.5" height="26.5" stroke="currentColor" stroke-width="1.2" />
+          <path d="M7 9H21M7 14H17M7 19H21" stroke="currentColor" stroke-width="1.3" />
+          <circle cx="20.5" cy="14" r="1.5" fill="#A3B8AE" />
+        </svg>
+        <div class="leading-none">
+          <div class="font-mono-label text-[11px] font-semibold text-ink">SWARAJ</div>
+          <div class="font-mono-label text-[10px] text-muted mt-0.5">PADHI · EPC</div>
+        </div>
+      </button>
+
+      <!-- Desktop Page Navigation -->
+      <nav class="hidden md:flex items-center gap-6" aria-label="Primary Page Navigation">
+        <button type="button" class="nav-link active font-mono-label text-[11px] text-muted hover:text-ink" data-page="about">01 · About</button>
+        <button type="button" class="nav-link font-mono-label text-[11px] text-muted hover:text-ink" data-page="automation">02 · Automation</button>
+        <button type="button" class="nav-link font-mono-label text-[11px] text-muted hover:text-ink" data-page="experience">03 · Experience</button>
+        <button type="button" class="nav-link font-mono-label text-[11px] text-muted hover:text-ink" data-page="skills">04 · Skills</button>
+        <button type="button" class="nav-link font-mono-label text-[11px] text-muted hover:text-ink" data-page="contact">05 · Contact &amp; Blogs</button>
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" type="button" class="md:hidden border border-hairline px-3 py-1.5 font-mono-label text-[11px] text-ink hover:border-hairlineHover" aria-expanded="false" aria-controls="mobileNav">
+        MENU
+      </button>
+    </div>
+
+    <!-- Mobile Nav Drawer -->
+    <div id="mobileNav" class="hidden md:hidden border-t border-hairline bg-canvas px-4 py-4">
+      <div class="flex flex-col gap-3 text-left">
+        <button type="button" class="mobile-nav-link text-left font-mono-label text-xs text-ink py-1" data-page="about">01 · About &amp; Summary</button>
+        <button type="button" class="mobile-nav-link text-left font-mono-label text-xs text-muted hover:text-ink py-1" data-page="automation">02 · Automation</button>
+        <button type="button" class="mobile-nav-link text-left font-mono-label text-xs text-muted hover:text-ink py-1" data-page="experience">03 · Experience</button>
+        <button type="button" class="mobile-nav-link text-left font-mono-label text-xs text-muted hover:text-ink py-1" data-page="skills">04 · Skills</button>
+        <button type="button" class="mobile-nav-link text-left font-mono-label text-xs text-muted hover:text-ink py-1" data-page="contact">05 · Contact &amp; Blogs</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top" class="relative z-10 mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
+
+    <!-- ==================== PAGE 1: ABOUT & SUMMARY ==================== -->
+    <div id="page-about" class="page-view active" data-page-id="about">
+      <div class="mb-5 flex items-center justify-between font-mono-label text-[10px] text-muted">
+        <span class="text-sage">[ PAGE 01 / 05 · ABOUT &amp; EXECUTIVE SUMMARY ]</span>
+        <span>HYDERABAD · INDIA</span>
+      </div>
+
+      <!-- Profile Dossier Intro Box with B&W PNG Portrait -->
+      <section class="hairline-box" aria-label="Profile Dossier">
+        <div class="grid grid-cols-1 lg:grid-cols-12">
+          <!-- Left Identity & B&W Portrait Column -->
+          <div class="lg:col-span-5 p-6 sm:p-7 border-b lg:border-b-0 lg:border-r border-hairline flex flex-col justify-between gap-5">
+            <div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="relative flex h-11 w-11 items-center justify-center">
+                    <svg class="absolute inset-0 w-11 h-11 spin-slow text-sage/60" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                      <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" />
+                      <circle cx="24" cy="2" r="1.8" fill="#A3B8AE" />
+                    </svg>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full border border-hairline bg-surface font-mono text-[11px] font-semibold text-ink">
+                      SK
+                    </div>
+                  </div>
+                  <div>
+                    <p class="font-mono-label text-[10px] text-sage">SOLAR EPC COORDINATOR</p>
+                    <p class="font-mono-label text-[10px] text-muted mt-0.5">JUNNA SOLAR SYSTEMS</p>
+                  </div>
+                </div>
+                <span class="inline-flex items-center gap-1.5 border border-hairline px-2 py-1 font-mono-label text-[9px] text-sage">
+                  <span class="h-1.5 w-1.5 rounded-full bg-sage pulse-node"></span>
+                  ACTIVE
+                </span>
+              </div>
+
+              <div class="pt-2">
+                <h1 class="text-2xl sm:text-3xl font-medium tracking-tight text-ink">Swaraj Kumar Padhi</h1>
+                <p class="mt-2 font-mono text-xs text-muted">Project Control × Data Analytics × AI Automation</p>
+                <p class="mt-4 text-xs text-zinc-400 leading-relaxed">
+                  Hyderabad, Telangana, India · Utility-scale Solar EPC, PostgreSQL &amp; Zoho Analytics MIS, and AI-assisted project intelligence.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 pt-1">
+              <a href="https://www.linkedin.com/in/swaraj-kumar-padhi/" target="_blank" rel="noopener noreferrer" class="border border-hairline px-3 py-1.5 font-mono-label text-[11px] text-ink hover:bg-ink hover:text-canvas transition-colors">
+                LINKEDIN ↗
+              </a>
+              <button id="copyEmailHeroBtn" type="button" class="border border-hairline px-3 py-1.5 font-mono-label text-[11px] text-sage hover:border-sage hover:text-ink transition-colors">
+                COPY EMAIL
+              </button>
+              <a href="mailto:swarajkumarpadhi002@gmail.com" class="border border-hairline px-3 py-1.5 font-mono-label text-[11px] text-muted hover:text-ink hover:border-hairlineHover transition-colors">
+                MAIL ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Executive Summary & Animated Telemetry Footprint -->
+          <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between gap-6">
+            <div class="space-y-3.5 text-sm sm:text-[15px] leading-relaxed text-zinc-300">
+              <p class="font-mono-label text-[10px] text-sage">[ EXECUTIVE SUMMARY ]</p>
+              <p>
+                Bridging utility-scale Solar EPC execution with structured PostgreSQL data pipelines, Zoho Analytics, and AI-assisted project intelligence—turning site milestones and planned-vs-actual telemetry into clear management decisions.
+              </p>
+              <p class="text-zinc-400 text-xs sm:text-sm">
+                Currently coordinating <span class="text-ink">35 MW</span> of active utility solar plants (SERP 26 MW &amp; MSKPY 9 MW) at Junna Solar Systems Limited, following large-scale PM-KUSUM coordination across <span class="text-ink">2,843</span> solar pump sites.
+              </p>
+            </div>
+
+            <!-- Quantified Footprint Strip with Animated Counters -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 border border-hairline divide-y sm:divide-y-0 sm:divide-x divide-hairline bg-surface/60">
+              <div class="p-3.5">
+                <div class="font-mono-label text-[10px] text-sage">ACTIVE</div>
+                <div class="mt-1 text-lg font-medium text-ink"><span class="count-up" data-target="35">35</span> MW</div>
+                <div class="mt-0.5 text-[11px] text-muted">SERP 26 + MSKPY 9</div>
+              </div>
+              <div class="p-3.5">
+                <div class="font-mono-label text-[10px] text-sage">PM-KUSUM</div>
+                <div class="mt-1 text-lg font-medium text-ink"><span class="count-up" data-target="2843" data-comma="true">2,843</span></div>
+                <div class="mt-0.5 text-[11px] text-muted">MSEDCL + MEDA Sites</div>
+              </div>
+              <div class="p-3.5">
+                <div class="font-mono-label text-[10px] text-sage">PUMP EPC</div>
+                <div class="mt-1 text-lg font-medium text-ink"><span class="count-up" data-target="5.13" data-decimals="2">5.13</span> MW</div>
+                <div class="mt-0.5 text-[11px] text-muted">3 HP &amp; 5 HP Capacity</div>
+              </div>
+              <div class="p-3.5">
+                <div class="font-mono-label text-[10px] text-sage">WORKFLOWS</div>
+                <div class="mt-1 text-lg font-medium text-ink">B2B·B2C·B2G</div>
+                <div class="mt-0.5 text-[11px] text-muted">AI &amp; ETL Architecture</div>
+              </div>
+            </div>
+
+            <!-- Visual Capacity & Site Distribution Graphics -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border border-hairline p-4 bg-surface/40">
+              <div>
+                <div class="flex items-center justify-between font-mono-label text-[10px] text-muted mb-2">
+                  <span>UTILITY SOLAR SPLIT (35 MW)</span>
+                  <span class="text-sage">74% / 26%</span>
+                </div>
+                <div class="h-2 w-full bg-hairline flex overflow-hidden">
+                  <div class="telemetry-bar-fill h-full bg-ink" style="width: 74.3%"></div>
+                  <div class="telemetry-bar-fill h-full bg-sage" style="width: 25.7%"></div>
+                </div>
+                <div class="mt-1.5 flex justify-between font-mono text-[10px] text-zinc-400">
+                  <span>■ SERP 26 MW</span>
+                  <span class="text-sage">■ MSKPY 9 MW</span>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between font-mono-label text-[10px] text-muted mb-2">
+                  <span>PM-KUSUM SITES (2,843)</span>
+                  <span class="text-sage">65% / 35%</span>
+                </div>
+                <div class="h-2 w-full bg-hairline flex overflow-hidden">
+                  <div class="telemetry-bar-fill h-full bg-ink" style="width: 65.3%"></div>
+                  <div class="telemetry-bar-fill h-full bg-sage" style="width: 34.7%"></div>
+                </div>
+                <div class="mt-1.5 flex justify-between font-mono text-[10px] text-zinc-400">
+                  <span>■ MSEDCL 1,856</span>
+                  <span class="text-sage">■ MEDA 987</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Selected Missions & Systems -->
+      <section class="mt-12" aria-label="Selected Missions">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-hairline">
+          <div>
+            <p class="font-mono-label text-[11px] text-sage">[ SELECTED MISSIONS &amp; SYSTEMS ]</p>
+            <h2 class="mt-1.5 text-xl sm:text-2xl font-medium tracking-tight text-ink">Portfolio Projects &amp; Frameworks</h2>
+          </div>
+          <div id="missionCounter" class="font-mono-label text-[11px] text-muted">
+            SHOWING 07 / 07 MISSIONS
+          </div>
+        </div>
+
+        <div id="filterBar" class="flex flex-wrap gap-2 py-5 border-b border-hairline" role="group" aria-label="Filter missions by category">
+          <button type="button" class="filter-btn active px-3.5 py-2 font-mono-label text-[11px]" data-filter="all">ALL · 07</button>
+          <button type="button" class="filter-btn px-3.5 py-2 font-mono-label text-[11px]" data-filter="epc">SOLAR EPC · 02</button>
+          <button type="button" class="filter-btn px-3.5 py-2 font-mono-label text-[11px]" data-filter="data">DATA &amp; BI · 02</button>
+          <button type="button" class="filter-btn px-3.5 py-2 font-mono-label text-[11px]" data-filter="ai">AUTOMATION &amp; AI · 03</button>
+        </div>
+
+        <div id="missionsList" class="divide-y divide-hairline border-b border-hairline"></div>
+      </section>
+    </div>
+
+    <!-- ==================== PAGE 2: AUTOMATION ==================== -->
+    <div id="page-automation" class="page-view" data-page-id="automation">
+      <div class="mb-5 flex items-center justify-between font-mono-label text-[10px] text-muted">
+        <span class="text-sage">[ PAGE 02 / 05 · AUTOMATION ARCHITECTURE ]</span>
+        <span>ETL · SQL · AI</span>
+      </div>
+
+      <div class="pb-5 border-b border-hairline flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <p class="font-mono-label text-[11px] text-sage">[ SYSTEM ARCHITECTURE ]</p>
+          <h2 class="mt-1.5 text-2xl sm:text-3xl font-medium tracking-tight text-ink">Solar EPC Tracking Automation Pipeline</h2>
+          <p class="mt-2 text-sm text-zinc-400 max-w-2xl">
+            Unified B2B, B2C, and B2G data architecture transforming raw site logs into centralized PostgreSQL records, Zoho Analytics dashboards, and AI-driven risk alerts.
+          </p>
+        </div>
+        <span class="font-mono-label text-[11px] text-muted shrink-0">5-STAGE LIVE FLOW</span>
+      </div>
+
+      <!-- Animated SVG Data-Flow Circuit Graphic -->
+      <div class="mt-6 hairline-box p-5 sm:p-6 overflow-x-auto">
+        <svg id="pipelineSchematic" viewBox="0 0 920 120" class="w-full min-w-[640px] h-auto" role="img" aria-label="Interactive 5-stage Solar EPC data automation flow schematic">
+          <line x1="150" y1="60" x2="205" y2="60" stroke="#3F3F46" stroke-width="1.5" />
+          <line x1="150" y1="60" x2="205" y2="60" stroke="#A3B8AE" stroke-width="1.5" class="flow-line" />
+          <line x1="335" y1="60" x2="390" y2="60" stroke="#3F3F46" stroke-width="1.5" />
+          <line x1="335" y1="60" x2="390" y2="60" stroke="#A3B8AE" stroke-width="1.5" class="flow-line" />
+          <line x1="520" y1="60" x2="575" y2="60" stroke="#3F3F46" stroke-width="1.5" />
+          <line x1="520" y1="60" x2="575" y2="60" stroke="#A3B8AE" stroke-width="1.5" class="flow-line" />
+          <line x1="705" y1="60" x2="760" y2="60" stroke="#3F3F46" stroke-width="1.5" />
+          <line x1="705" y1="60" x2="760" y2="60" stroke="#A3B8AE" stroke-width="1.5" class="flow-line" />
+
+          <circle r="3.2" fill="#F4F4F0">
+            <animateMotion dur="4.6s" repeatCount="indefinite" path="M 30 60 L 890 60" />
+          </circle>
+
+          <g class="schematic-node cursor-pointer" data-stage="01">
+            <rect x="16" y="22" width="134" height="76" fill="#0B0B0B" stroke="#A3B8AE" stroke-width="1.2" />
+            <text x="28" y="45" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="10">01 · INGEST</text>
+            <text x="28" y="65" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="12" font-weight="500">Zoho &amp; Excel</text>
+            <text x="28" y="83" fill="#8E8E93" font-family="JetBrains Mono, monospace" font-size="9">SITE LOGS</text>
+          </g>
+          <g class="schematic-node cursor-pointer" data-stage="02">
+            <rect x="205" y="22" width="130" height="76" fill="#0B0B0B" stroke="#27272A" stroke-width="1.2" />
+            <text x="217" y="45" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="10">02 · ETL</text>
+            <text x="217" y="65" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="12" font-weight="500">Python Script</text>
+            <text x="217" y="83" fill="#8E8E93" font-family="JetBrains Mono, monospace" font-size="9">VALIDATE</text>
+          </g>
+          <g class="schematic-node cursor-pointer" data-stage="03">
+            <rect x="390" y="22" width="130" height="76" fill="#0B0B0B" stroke="#27272A" stroke-width="1.2" />
+            <text x="402" y="45" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="10">03 · STORE</text>
+            <text x="402" y="65" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="12" font-weight="500">PostgreSQL</text>
+            <text x="402" y="83" fill="#8E8E93" font-family="JetBrains Mono, monospace" font-size="9">SQL WAREHOUSE</text>
+          </g>
+          <g class="schematic-node cursor-pointer" data-stage="04">
+            <rect x="575" y="22" width="130" height="76" fill="#0B0B0B" stroke="#27272A" stroke-width="1.2" />
+            <text x="587" y="45" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="10">04 · VISUALIZE</text>
+            <text x="587" y="65" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="12" font-weight="500">Zoho Analytics</text>
+            <text x="587" y="83" fill="#8E8E93" font-family="JetBrains Mono, monospace" font-size="9">MIS &amp; KPI</text>
+          </g>
+          <g class="schematic-node cursor-pointer" data-stage="05">
+            <rect x="760" y="22" width="144" height="76" fill="#0B0B0B" stroke="#27272A" stroke-width="1.2" />
+            <text x="772" y="45" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="10">05 · INTELLIGENCE</text>
+            <text x="772" y="65" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="12" font-weight="500">AI Risk Layer</text>
+            <text x="772" y="83" fill="#8E8E93" font-family="JetBrains Mono, monospace" font-size="9">DELAY ALERTS</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Stage Tabs -->
+      <div id="pipelineTabs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 mt-3"></div>
+
+      <!-- Active Stage Detail Dossier -->
+      <div id="pipelineDetail" class="mt-3 hairline-box p-6 sm:p-7"></div>
+
+      <!-- Enterprise ERP & AI Integration Matrix -->
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="hairline-box p-5">
+          <div class="font-mono-label text-[10px] text-sage">B2B · B2C · B2G</div>
+          <h3 class="mt-2 text-base font-medium text-ink">Multi-Segment Normalization</h3>
+          <p class="mt-2 text-xs sm:text-sm text-zinc-400 leading-relaxed">
+            Unified site identifiers and milestone taxonomies across utility solar plants, commercial rooftops, and government PM-KUSUM tenders.
+          </p>
+        </div>
+        <div class="hairline-box p-5">
+          <div class="font-mono-label text-[10px] text-sage">ERP PROCESS MAPPING</div>
+          <h3 class="mt-2 text-base font-medium text-ink">CRM to Commissioning</h3>
+          <p class="mt-2 text-xs sm:text-sm text-zinc-400 leading-relaxed">
+            Connected CRM, sales, BOM procurement, inventory dispatch, finance billing, and site execution handoffs into one blueprint.
+          </p>
+        </div>
+        <div class="hairline-box p-5">
+          <div class="font-mono-label text-[10px] text-sage">CLAUDE AI &amp; CHATGPT</div>
+          <h3 class="mt-2 text-base font-medium text-ink">Automated Risk Summaries</h3>
+          <p class="mt-2 text-xs sm:text-sm text-zinc-400 leading-relaxed">
+            Converts weekly planned-vs-actual SQL variance exports into concise executive risk registers and dependency alerts.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PAGE 3: EXPERIENCE ==================== -->
+    <div id="page-experience" class="page-view" data-page-id="experience">
+      <div class="mb-5 flex items-center justify-between font-mono-label text-[10px] text-muted">
+        <span class="text-sage">[ PAGE 03 / 05 · EXPERIENCE &amp; CREDENTIALS ]</span>
+        <span>2023 — PRESENT</span>
+      </div>
+
+      <div class="pb-5 border-b border-hairline flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <p class="font-mono-label text-[11px] text-sage">[ CAREER TRACK RECORD ]</p>
+          <h2 class="mt-1.5 text-2xl sm:text-3xl font-medium tracking-tight text-ink">Professional Experience</h2>
+        </div>
+        <span class="font-mono-label text-[11px] text-muted">SOLAR EPC · PM · INSTRUMENTATION</span>
+      </div>
+
+      <!-- Animated Career Progression SVG Timeline -->
+      <div class="mt-6 hairline-box p-5 overflow-x-auto">
+        <svg viewBox="0 0 860 88" class="w-full min-w-[580px] h-auto" role="img" aria-label="Career progression timeline from 2023 to present">
+          <line x1="70" y1="34" x2="790" y2="34" stroke="#27272A" stroke-width="1.5" />
+          <line x1="70" y1="34" x2="790" y2="34" stroke="#A3B8AE" stroke-width="1.5" class="flow-line" />
+
+          <g>
+            <circle cx="70" cy="34" r="6" fill="#0B0B0B" stroke="#8E8E93" stroke-width="1.5" />
+            <text x="70" y="60" text-anchor="middle" fill="#8E8E93" font-family="JetBrains Mono, monospace" font-size="10">JUN–AUG 2023</text>
+            <text x="70" y="76" text-anchor="middle" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="11">Mahanadi Coalfields</text>
+          </g>
+
+          <g>
+            <circle cx="430" cy="34" r="6" fill="#0B0B0B" stroke="#A3B8AE" stroke-width="1.5" />
+            <text x="430" y="60" text-anchor="middle" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="10">FEB 2025 – OCT 2026</text>
+            <text x="430" y="76" text-anchor="middle" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="11">Group Surya · 2,843 Sites</text>
+          </g>
+
+          <g>
+            <circle cx="790" cy="34" r="7" fill="#A3B8AE" class="pulse-node" />
+            <text x="790" y="60" text-anchor="middle" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="10">OCT 2026 – PRESENT</text>
+            <text x="790" y="76" text-anchor="middle" fill="#F4F4F0" font-family="Inter, sans-serif" font-size="11">Junna Solar · 35 MW</text>
+          </g>
+        </svg>
+      </div>
+
+      <div id="experienceList" class="mt-2 divide-y divide-hairline border-b border-hairline"></div>
+
+      <!-- Education & Certifications Dossier -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 hairline-box mt-10">
+        <div class="lg:col-span-5 p-6 border-b lg:border-b-0 lg:border-r border-hairline">
+          <p class="font-mono-label text-[10px] text-sage">EDUCATION</p>
+          <h3 class="mt-2 text-lg font-medium text-ink">B.Tech – Electronics &amp; Communication Engineering</h3>
+          <p class="mt-1.5 text-sm text-zinc-400">Silicon Institute of Technology, Bhubaneswar</p>
+          <p class="mt-3 font-mono-label text-[11px] text-muted">DEC 2021 — MAY 2025</p>
+        </div>
+        <div class="lg:col-span-7 p-6">
+          <p class="font-mono-label text-[10px] text-sage mb-3">CERTIFICATIONS &amp; LICENSES</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="border border-hairline p-3 bg-surface/50 hover:border-sage transition-colors">
+              <div class="font-mono-label text-[10px] text-muted">NCVET · GOVT. OF INDIA</div>
+              <div class="mt-1 text-xs sm:text-sm text-ink">Solar Site Supervisor</div>
+            </div>
+            <div class="border border-hairline p-3 bg-surface/50 hover:border-sage transition-colors">
+              <div class="font-mono-label text-[10px] text-muted">GOOGLE</div>
+              <div class="mt-1 text-xs sm:text-sm text-ink">Foundations of Cybersecurity</div>
+            </div>
+            <div class="border border-hairline p-3 bg-surface/50 hover:border-sage transition-colors">
+              <div class="font-mono-label text-[10px] text-muted">PRODUCT &amp; AI</div>
+              <div class="mt-1 text-xs sm:text-sm text-ink">AI in Product Management</div>
+            </div>
+            <div class="border border-hairline p-3 bg-surface/50 hover:border-sage transition-colors">
+              <div class="font-mono-label text-[10px] text-muted">STRATEGY</div>
+              <div class="mt-1 text-xs sm:text-sm text-ink">Understanding Incubation &amp; Entrepreneurship</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PAGE 4: SKILLS ==================== -->
+    <div id="page-skills" class="page-view" data-page-id="skills">
+      <div class="mb-5 flex items-center justify-between font-mono-label text-[10px] text-muted">
+        <span class="text-sage">[ PAGE 04 / 05 · TECHNICAL STACK &amp; CAPABILITIES ]</span>
+        <span>EPC · SQL · BI · AI</span>
+      </div>
+
+      <div class="pb-5 border-b border-hairline flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <p class="font-mono-label text-[11px] text-sage">[ CAPABILITY MATRIX ]</p>
+          <h2 class="mt-1.5 text-2xl sm:text-3xl font-medium tracking-tight text-ink">Skills &amp; Tooling Ecosystem</h2>
+        </div>
+        <span class="font-mono-label text-[11px] text-muted">5 CORE DOMAINS</span>
+      </div>
+
+      <!-- Domain Capability SVG Graphic + Summary -->
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 hairline-box">
+        <div class="lg:col-span-5 p-6 border-b lg:border-b-0 lg:border-r border-hairline flex items-center justify-center">
+          <svg viewBox="0 0 280 250" class="w-full max-w-[260px] h-auto" role="img" aria-label="Five-domain capability radar chart">
+            <!-- Concentric pentagon guides -->
+            <polygon points="140,25 245,101 205,224 75,224 35,101" fill="none" stroke="#222222" stroke-width="1" />
+            <polygon points="140,58 212,110 184,195 96,195 68,110" fill="none" stroke="#222222" stroke-width="1" />
+            <polygon points="140,92 178,120 163,165 117,165 102,120" fill="none" stroke="#222222" stroke-width="1" />
+            <!-- Axis lines -->
+            <line x1="140" y1="130" x2="140" y2="25" stroke="#222222" stroke-width="1" />
+            <line x1="140" y1="130" x2="245" y2="101" stroke="#222222" stroke-width="1" />
+            <line x1="140" y1="130" x2="205" y2="224" stroke="#222222" stroke-width="1" />
+            <line x1="140" y1="130" x2="75" y2="224" stroke="#222222" stroke-width="1" />
+            <line x1="140" y1="130" x2="35" y2="101" stroke="#222222" stroke-width="1" />
+            <!-- Capability polygon -->
+            <polygon points="140,34 234,104 195,212 84,210 46,105" fill="rgba(163, 184, 174, 0.16)" stroke="#A3B8AE" stroke-width="1.5" />
+            <circle cx="140" cy="34" r="3" fill="#F4F4F0" />
+            <circle cx="234" cy="104" r="3" fill="#F4F4F0" />
+            <circle cx="195" cy="212" r="3" fill="#F4F4F0" />
+            <circle cx="84" cy="210" r="3" fill="#F4F4F0" />
+            <circle cx="46" cy="105" r="3" fill="#F4F4F0" />
+            <!-- Labels -->
+            <text x="140" y="14" text-anchor="middle" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="9">PROJECT CONTROL</text>
+            <text x="248" y="96" text-anchor="end" fill="#F4F4F0" font-family="JetBrains Mono, monospace" font-size="9">SOLAR EPC</text>
+            <text x="214" y="240" text-anchor="middle" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="9">DATA &amp; SQL</text>
+            <text x="66" y="240" text-anchor="middle" fill="#A3B8AE" font-family="JetBrains Mono, monospace" font-size="9">BI TOOLS</text>
+            <text x="32" y="96" text-anchor="start" fill="#F4F4F0" font-family="JetBrains Mono, monospace" font-size="9">AI &amp; AUTO</text>
+          </svg>
+        </div>
+
+        <div class="lg:col-span-7 p-6 flex flex-col justify-center space-y-4">
+          <p class="font-mono-label text-[10px] text-sage">CROSS-FUNCTIONAL PROFILE</p>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            Combining field-level Solar EPC execution (35 MW utility plants &amp; 2,843 PM-KUSUM sites) with relational database engineering (PostgreSQL/SQL), Python ETL automation, Zoho Analytics MIS, and AI-assisted risk intelligence.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div class="border border-hairline p-3 bg-surface/50">
+              <div class="font-mono-label text-[10px] text-muted">CORE DATABASE &amp; BI</div>
+              <div class="mt-1 text-xs sm:text-sm text-ink">PostgreSQL · Zoho Analytics · Excel</div>
+            </div>
+            <div class="border border-hairline p-3 bg-surface/50">
+              <div class="font-mono-label text-[10px] text-muted">AI &amp; WORKFLOW STACK</div>
+              <div class="mt-1 text-xs sm:text-sm text-ink">Claude AI · ChatGPT · Python ETL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skill Category Tabs -->
+      <div id="skillTabs" class="flex flex-wrap gap-2 py-5 border-b border-hairline mt-6" role="group" aria-label="Filter skills by domain"></div>
+
+      <!-- Skills Grid -->
+      <div id="skillsGrid" class="py-6 flex flex-wrap gap-2 border-b border-hairline"></div>
+    </div>
+
+    <!-- ==================== PAGE 5: CONTACT & BLOGS ==================== -->
+    <div id="page-contact" class="page-view" data-page-id="contact">
+      <div class="mb-5 flex items-center justify-between font-mono-label text-[10px] text-muted">
+        <span class="text-sage">[ PAGE 05 / 05 · CONTACT &amp; FIELD BLOGS ]</span>
+        <span>WRITING · INQUIRIES</span>
+      </div>
+
+      <!-- Blogs / Technical Field Notes Section -->
+      <section aria-label="Technical Blogs">
+        <div class="pb-5 border-b border-hairline flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div>
+            <p class="font-mono-label text-[11px] text-sage">[ FIELD NOTES &amp; BLOGS ]</p>
+            <h2 class="mt-1.5 text-2xl sm:text-3xl font-medium tracking-tight text-ink">Technical Writing &amp; Insights</h2>
+          </div>
+          <span class="font-mono-label text-[11px] text-muted">03 ARTICLES</span>
+        </div>
+
+        <div id="blogsList" class="divide-y divide-hairline border-b border-hairline"></div>
+      </section>
+
+      <!-- Contact CTA Box -->
+      <section class="mt-12" aria-label="Direct Contact">
+        <div class="hairline-box p-7 sm:p-10">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div class="max-w-xl">
+              <p class="font-mono-label text-[11px] text-sage">[ CONTACT ]</p>
+              <h2 class="mt-2.5 text-2xl sm:text-3xl font-medium tracking-tight text-ink">
+                A Solar EPC project, data pipeline, or automation challenge?
+              </h2>
+              <p class="mt-3 text-sm text-zinc-400 leading-relaxed">
+                Available for Solar EPC project control, PostgreSQL &amp; Zoho Analytics reporting architecture, and AI-assisted operational workflows.
+              </p>
+              <div class="mt-5 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-zinc-300">
+                <span>swarajkumarpadhi002@gmail.com</span>
+                <span class="text-muted">·</span>
+                <span>+91-6372442064</span>
+                <span class="text-muted">·</span>
+                <span>Hyderabad, India</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+              <button id="openContactModalBtn" type="button" class="bg-ink text-canvas px-6 py-3.5 font-mono-label text-xs font-semibold hover:bg-zinc-200 transition-colors text-center">
+                INITIATE CONTACT →
+              </button>
+              <button id="copyEmailFooterBtn" type="button" class="border border-hairline px-6 py-3 font-mono-label text-[11px] text-ink hover:border-hairlineHover transition-colors text-center">
+                COPY EMAIL ADDRESS
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Prev / Next Page Navigation Bar -->
+    <div class="mt-12 pt-6 border-t border-hairline flex items-center justify-between gap-4">
+      <button id="prevPageBtn" type="button" class="border border-hairline px-4 py-2.5 font-mono-label text-[11px] text-muted hover:text-ink hover:border-hairlineHover transition-colors">
+        ← PREV PAGE
+      </button>
+      <span id="pageIndicatorLabel" class="font-mono-label text-[11px] text-sage">01 / 05</span>
+      <button id="nextPageBtn" type="button" class="border border-hairline px-4 py-2.5 font-mono-label text-[11px] text-ink hover:bg-ink hover:text-canvas transition-colors">
+        NEXT PAGE →
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Fixed Bottom-Right Utility Bar (SLX Scroll Progress Readout) -->
+  <div class="fixed bottom-4 right-4 z-30 flex items-center border border-hairline bg-canvas/95 backdrop-blur-md divide-x divide-hairline">
+    <span id="scrollPct" class="px-3 py-1.5 font-mono text-[11px] text-sage tabular-nums">000%</span>
+    <button id="scrollTopBtn" type="button" class="px-3 py-1.5 font-mono-label text-[10px] text-muted hover:text-ink transition-colors">
+      TOP ↑
+    </button>
+  </div>
+
+  <!-- Mission / Blog Detail Modal -->
+  <div id="missionModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="hairline-box modal-panel w-full max-w-2xl max-h-[88vh] overflow-y-auto bg-canvas p-6 sm:p-8">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-hairline">
+        <div>
+          <p id="modalEyebrow" class="font-mono-label text-[11px] text-sage"></p>
+          <h3 id="modalTitle" class="mt-1.5 text-xl sm:text-2xl font-medium text-ink"></h3>
+        </div>
+        <button id="closeMissionModalBtn" type="button" class="border border-hairline px-3 py-1 font-mono-label text-[11px] text-muted hover:text-ink hover:border-hairlineHover">
+          CLOSE ✕
+        </button>
+      </div>
+      <div class="mt-5 space-y-5">
+        <p id="modalSummary" class="text-sm sm:text-[15px] leading-relaxed text-zinc-300"></p>
+        <div id="modalMeta" class="grid grid-cols-1 sm:grid-cols-2 gap-4 border border-hairline p-4 bg-surface/60"></div>
+        <div>
+          <p id="modalListHeading" class="font-mono-label text-[10px] text-muted mb-2.5">KEY EXECUTION HIGHLIGHTS</p>
+          <ul id="modalHighlights" class="space-y-2 text-sm text-zinc-300 list-disc pl-5"></ul>
+        </div>
+        <div id="modalTags" class="flex flex-wrap gap-1.5 pt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div id="contactModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+    <div class="hairline-box modal-panel w-full max-w-lg bg-canvas p-6 sm:p-8">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-hairline">
+        <div>
+          <p class="font-mono-label text-[11px] text-sage">[ DIRECT INQUIRY ]</p>
+          <h3 id="contactModalTitle" class="mt-1 text-xl font-medium text-ink">Message Swaraj Kumar Padhi</h3>
+        </div>
+        <button id="closeContactModalBtn" type="button" class="border border-hairline px-3 py-1 font-mono-label text-[11px] text-muted hover:text-ink">
+          CLOSE ✕
+        </button>
+      </div>
+      <form id="contactForm" class="mt-5 space-y-4">
+        <div>
+          <label for="senderName" class="block font-mono-label text-[10px] text-muted mb-1.5">YOUR NAME</label>
+          <input id="senderName" type="text" required placeholder="e.g. Project Director" class="w-full border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink placeholder-zinc-600 focus:border-sage focus:outline-none" />
+        </div>
+        <div>
+          <label for="senderTopic" class="block font-mono-label text-[10px] text-muted mb-1.5">TOPIC</label>
+          <select id="senderTopic" class="w-full border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-sage focus:outline-none">
+            <option value="Solar EPC Project Control">Solar EPC Project Control</option>
+            <option value="Data Pipeline &amp; Zoho Analytics">Data Pipeline &amp; Zoho Analytics</option>
+            <option value="AI Workflow Automation">AI Workflow Automation</option>
+            <option value="General Opportunity">General Opportunity</option>
+          </select>
+        </div>
+        <div>
+          <label for="senderMessage" class="block font-mono-label text-[10px] text-muted mb-1.5">BRIEF / MESSAGE</label>
+          <textarea id="senderMessage" rows="4" required placeholder="Share project scope, capacity, or collaboration details..." class="w-full border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink placeholder-zinc-600 focus:border-sage focus:outline-none"></textarea>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2.5 pt-2">
+          <button type="submit" class="flex-1 bg-ink text-canvas py-2.5 font-mono-label text-xs font-semibold hover:bg-zinc-200 transition-colors">
+            OPEN IN EMAIL CLIENT →
+          </button>
+          <button id="copyInquiryBtn" type="button" class="border border-hairline px-4 py-2.5 font-mono-label text-[11px] text-sage hover:text-ink hover:border-hairlineHover transition-colors">
+            COPY BRIEF
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="hidden fixed bottom-16 right-4 z-50 border border-sage bg-canvas px-4 py-2.5 font-mono text-xs text-ink"></div>
+
+  <script>
+    const PAGES = ['about', 'automation', 'experience', 'skills', 'contact'];
+
+    const MISSIONS = [
+      {
+        index: '01',
+        category: 'data',
+        eyebrow: 'DATA & BI · 2026',
+        title: 'Solar EPC Project Tracking Dashboard',
+        subtitle: 'Consolidated project-wise & site-wise visibility across utility and distributed solar assets',
+        narrative: 'Unified fragmented site spreadsheets into a structured PostgreSQL and Zoho Analytics reporting layer, enabling leadership to compare planned-vs-actual milestones and isolate pending execution bottlenecks in real time.',
+        meta: {
+          SEGMENT: 'B2B · B2C · B2G Solar EPC',
+          STACK: 'Excel, PostgreSQL, Zoho Analytics',
+          DELIVERABLES: 'MIS & KPI Dashboards',
+          STATUS: 'Production Deployed'
+        },
+        highlights: [
+          'Consolidated multi-site progress logs into normalized PostgreSQL tables with automated validation rules.',
+          'Built executive MIS views in Zoho Analytics tracking planned-vs-actual variance and pending site tasks.',
+          'Reduced manual reporting reconciliation time across project coordination teams.'
+        ],
+        tags: ['Excel', 'PostgreSQL', 'Zoho Analytics']
+      },
+      {
+        index: '02',
+        category: 'ai',
+        eyebrow: 'AUTOMATION & AI · 2026',
+        title: 'Solar EPC Tracking Automation Architecture',
+        subtitle: 'Unified B2B, B2C, and B2G integration workflow across Zoho Projects, Python & AI',
+        narrative: 'Architected an end-to-end 5-stage pipeline ingesting Zoho Projects and Excel site updates, cleaning records via Python ETL, persisting into PostgreSQL, and surfacing AI-assisted schedule risk alerts.',
+        meta: {
+          SEGMENT: 'Enterprise EPC Operations',
+          STACK: 'Zoho Projects, Python, PostgreSQL, AI',
+          DELIVERABLES: 'Automated ETL & Risk Alerts',
+          STATUS: 'Active Architecture'
+        },
+        highlights: [
+          'Connected Zoho Projects task dependencies and Excel field updates into a single ingestion stream.',
+          'Implemented Python data-validation scripts to catch missing milestone dates and status mismatches.',
+          'Added an AI risk layer to flag schedule slippage before critical-path delays compound.'
+        ],
+        tags: ['Zoho Projects', 'Python', 'PostgreSQL', 'AI']
+      },
+      {
+        index: '03',
+        category: 'epc',
+        eyebrow: 'SOLAR EPC · 2026 — PRESENT',
+        title: 'MSKPY (9 MW) & SERP (26 MW) Solar Plants',
+        subtitle: 'Active project control, execution tracking & milestone monitoring across 35 MW utility solar',
+        narrative: 'Leading day-to-day project coordination and schedule control at Junna Solar Systems Limited across two utility-scale solar power plants totaling 35 MW, aligning engineering, procurement, and site execution.',
+        meta: {
+          STRUCTURE: 'Junna Solar Systems Limited',
+          CAPACITY: '35 MW (26 MW SERP + 9 MW MSKPY)',
+          DELIVERABLES: 'Schedule Control & Deviation MIS',
+          LOCATION: 'Hyderabad, India'
+        },
+        highlights: [
+          'Monitor critical milestones, task dependencies, and pending activities across both 26 MW and 9 MW plants.',
+          'Run planned-vs-actual progress reviews to surface execution bottlenecks early.',
+          'Deliver structured management reports backed by Excel, PostgreSQL, and Zoho Analytics.'
+        ],
+        tags: ['35 MW Solar', 'Project Control', 'Milestone Tracking']
+      },
+      {
+        index: '04',
+        category: 'epc',
+        eyebrow: 'SOLAR EPC · 2025 — 2026',
+        title: 'MSEDCL & MEDA PM-KUSUM Solar Pumps',
+        subtitle: 'Site-wise EPC coordination across 2,843 solar water pump installations (5.13 MW)',
+        narrative: 'Coordinated end-to-end EPC execution at Group Surya for 1,856 MSEDCL sites (3.33 MW) and 987 MEDA sites (1.8 MW), spanning BOM planning, vendor logistics, commissioning, and SCADA/RMS support.',
+        meta: {
+          STRUCTURE: 'Group Surya (Surya International)',
+          SCALE: '2,843 Sites · 5.13 MW (3 HP & 5 HP)',
+          DELIVERABLES: 'BOM, Logistics, Commissioning, RMS',
+          LOCATION: 'Bhubaneswar / Maharashtra'
+        },
+        highlights: [
+          'Managed Bill of Materials (BOM) preparation, material planning, procurement follow-up, and site readiness.',
+          'Coordinated field installation, inspection, and commissioning across 2,843 distributed pump locations.',
+          'Supported MIS reporting and SCADA/RMS telemetry verification post-commissioning.'
+        ],
+        tags: ['PM-KUSUM', '2,843 Sites', 'SCADA/RMS']
+      },
+      {
+        index: '05',
+        category: 'data',
+        eyebrow: 'DATA & BI · 2026',
+        title: 'Solar EPC Data Management & Reporting',
+        subtitle: 'Structured SQL data validation and multi-segment PostgreSQL reporting workflow',
+        narrative: 'Designed relational schemas and SQL audit queries to standardize project reporting across B2B, B2C, and B2G solar verticals, eliminating duplicate site records and inconsistent status labels.',
+        meta: {
+          SEGMENT: 'B2B · B2C · B2G Reporting',
+          STACK: 'PostgreSQL, SQL, Data Validation',
+          DELIVERABLES: 'Normalized Schema & Audit Queries',
+          STATUS: 'Active Workflow'
+        },
+        highlights: [
+          'Standardized site identifiers and milestone taxonomies across three distinct business segments.',
+          'Created SQL views for rapid executive filtering by region, capacity, and pending clearance stage.',
+          'Enforced data integrity checks prior to dashboard refresh cycles.'
+        ],
+        tags: ['PostgreSQL', 'SQL', 'Data Validation']
+      },
+      {
+        index: '06',
+        category: 'ai',
+        eyebrow: 'AUTOMATION & AI · 2026',
+        title: 'AI-Assisted Project Intelligence Framework',
+        subtitle: 'Using Claude AI & ChatGPT to surface schedule deviations and execution risks',
+        narrative: 'Built structured prompt and analysis workflows pairing Claude AI and ChatGPT with EPC telemetry exports to summarize weekly site risks, draft stakeholder escalations, and highlight dependency delays.',
+        meta: {
+          DOMAIN: 'AI Project Intelligence',
+          STACK: 'Claude AI, ChatGPT, Excel Telemetry',
+          DELIVERABLES: 'Risk Summaries & Deviation Briefs',
+          STATUS: 'Operational Framework'
+        },
+        highlights: [
+          'Automated weekly synthesis of multi-site progress logs into concise risk registers.',
+          'Identified recurring vendor and clearance bottlenecks across parallel EPC workstreams.',
+          'Accelerated management decision cycles with structured planned-vs-actual commentary.'
+        ],
+        tags: ['Claude AI', 'ChatGPT', 'Risk Intelligence']
+      },
+      {
+        index: '07',
+        category: 'ai',
+        eyebrow: 'AUTOMATION & AI · 2026',
+        title: 'Enterprise ERP Business Process Model',
+        subtitle: 'AI-assisted ERP workflow mapping CRM, sales, procurement, inventory, finance & projects',
+        narrative: 'Mapped cross-functional enterprise workflows connecting CRM lead capture, sales handoff, BOM procurement, inventory dispatch, finance billing, and EPC project execution into a cohesive blueprint.',
+        meta: {
+          DOMAIN: 'Enterprise Process Architecture',
+          MODULES: 'CRM · Sales · Procurement · Finance',
+          DELIVERABLES: 'End-to-End ERP Process Blueprint',
+          STATUS: 'Reference Model'
+        },
+        highlights: [
+          'Defined data handoff checkpoints between commercial, supply chain, finance, and site execution teams.',
+          'Eliminated manual re-entry gaps between procurement BOMs and project milestone tracking.',
+          'Designed modular integration hooks compatible with Zoho and SQL-backed reporting.'
+        ],
+        tags: ['ERP Mapping', 'Workflow Design', 'Process Architecture']
+      }
+    ];
+
+    const PIPELINE_STAGES = [
+      {
+        num: '01',
+        phase: 'INGEST',
+        title: 'Zoho Projects & Excel',
+        short: 'Site updates & tasks',
+        detailTitle: 'Zoho Projects & Excel Consolidation',
+        detailBody: 'Captures project-wise and site-wise execution updates, pending activities, and milestone dependencies across B2B, B2C, and B2G Solar EPC projects.',
+        inputs: 'Field engineer logs, Zoho Projects task exports, vendor readiness sheets',
+        output: 'Raw structured daily/weekly activity snapshots',
+        tags: ['Zoho Projects', 'Excel']
+      },
+      {
+        num: '02',
+        phase: 'ETL',
+        title: 'Python Automation',
+        short: 'Clean & validate',
+        detailTitle: 'Python ETL & Data Validation Layer',
+        detailBody: 'Parses incoming workbooks and project exports, normalizes site IDs and milestone statuses, flags missing dates, and prepares clean relational records.',
+        inputs: 'Unstandardized Excel & Zoho CSV/API exports',
+        output: 'Validated, deduplicated records ready for SQL ingestion',
+        tags: ['Python', 'ETL', 'Validation']
+      },
+      {
+        num: '03',
+        phase: 'STORE',
+        title: 'PostgreSQL + SQL',
+        short: 'Centralized records',
+        detailTitle: 'Centralized PostgreSQL Data Warehouse',
+        detailBody: 'Stores historical and live project telemetry in normalized SQL tables, maintaining an auditable single source of truth for planned-vs-actual tracking.',
+        inputs: 'Cleaned Python ETL batches',
+        output: 'Indexed SQL views by plant, state, agency, and milestone',
+        tags: ['PostgreSQL', 'SQL']
+      },
+      {
+        num: '04',
+        phase: 'VISUALIZE',
+        title: 'Zoho Analytics',
+        short: 'MIS & KPI dashboards',
+        detailTitle: 'Zoho Analytics Executive MIS Dashboards',
+        detailBody: 'Transforms PostgreSQL views into interactive management dashboards covering MW commissioning curves, pending clearances, and contractor performance.',
+        inputs: 'PostgreSQL reporting views',
+        output: 'Live KPI scorecards & planned-vs-actual variance charts',
+        tags: ['Zoho Analytics', 'MIS Reporting']
+      },
+      {
+        num: '05',
+        phase: 'INTELLIGENCE',
+        title: 'AI Risk Layer',
+        short: 'Delay prediction',
+        detailTitle: 'AI-Assisted Schedule Risk Intelligence',
+        detailBody: 'Applies Claude AI and ChatGPT analysis over variance telemetry to surface early schedule deviations, dependency bottlenecks, and actionable recovery steps.',
+        inputs: 'KPI anomalies & milestone dependency chains',
+        output: 'Executive risk briefs & mitigation recommendations',
+        tags: ['Claude AI', 'ChatGPT', 'Risk Analysis']
+      }
+    ];
+
+    const EXPERIENCE = [
+      {
+        index: '01',
+        period: 'OCT 2026 — PRESENT',
+        role: 'Project Coordinator – Solar EPC',
+        company: 'Junna Solar Systems Limited · Hyderabad, India',
+        bullets: [
+          'Monitor and analyse progress, milestones, and pending activities across MSKPY (9 MW) and SERP (26 MW) solar power plants.',
+          'Track schedules, dependencies, and planned-vs-actual progress to surface schedule deviations and execution bottlenecks.',
+          'Build tracking & analysis reports using Microsoft Excel, PostgreSQL, and Zoho Analytics.',
+          'Architect a Solar EPC Project Tracking Automation workflow integrating Zoho Projects, Python, PostgreSQL, and AI-assisted intelligence.'
+        ],
+        tags: ['35 MW Solar', 'PostgreSQL', 'Zoho Analytics', 'Python']
+      },
+      {
+        index: '02',
+        period: 'FEB 2025 — OCT 2026',
+        role: 'Graduate Engineer Trainee (GET) – Project Management & EPC',
+        company: 'Group Surya (Surya International Enterprises Ltd.) · Bhubaneswar, India',
+        bullets: [
+          'Coordinated PM-KUSUM solar pump EPC projects for MSEDCL (3.33 MW, 1,856 sites) and MEDA (1.8 MW, 987 sites).',
+          'Managed BOM preparation, material planning, procurement follow-up, logistics, site readiness, and vendor coordination.',
+          'Monitored installation, commissioning, inspection, MIS reporting, and supported SCADA/RMS monitoring.'
+        ],
+        tags: ['PM-KUSUM', '2,843 Sites', 'BOM & Procurement', 'SCADA/RMS']
+      },
+      {
+        index: '03',
+        period: 'JUN 2023 — AUG 2023',
+        role: 'Engineer Trainee – Electronics & Communication',
+        company: 'Mahanadi Coalfields Limited (MCL) · Brajrajnagar, India',
+        bullets: [
+          'Gained practical exposure to industrial communication, electronic instrumentation, control systems, and monitoring equipment.'
+        ],
+        tags: ['Instrumentation', 'Control Systems', 'Industrial Comms']
+      }
+    ];
+
+    const SKILLS = {
+      'Project Control': [
+        'Project Scheduling', 'Progress Tracking', 'Milestone Monitoring',
+        'Planned vs. Actual Analysis', 'Schedule Deviation Analysis',
+        'Execution Monitoring', 'Issue Tracking', 'MIS Reporting'
+      ],
+      'Solar EPC': [
+        'Solar Power Projects', 'PM-KUSUM', 'Site Coordination',
+        'Installation & Commissioning', 'Inspection', 'Material Planning',
+        'Procurement Coordination', 'Vendor Management', 'SCADA/RMS'
+      ],
+      'Data & SQL': [
+        'PostgreSQL', 'SQL', 'Python', 'ETL Concepts',
+        'Data Integration', 'Data Validation', 'Data Analysis', 'Dashboard Development'
+      ],
+      'BI & PM Tools': [
+        'Zoho Projects', 'Zoho Analytics', 'Microsoft Excel',
+        'Advanced Excel', 'Gantt Charts', 'Task Dependencies', 'Project Reporting'
+      ],
+      'AI & Automation': [
+        'Claude AI', 'ChatGPT', 'Gemini', 'Microsoft Copilot',
+        'NotebookLM', 'GPT for Excel', 'Formula Bot', 'Workflow Design', 'ERP Process Mapping'
+      ]
+    };
+
+    const BLOGS = [
+      {
+        index: '01',
+        date: 'NOV 2026 · SOLAR EPC',
+        title: 'Scaling PM-KUSUM EPC Tracking Across 2,843 Distributed Sites',
+        summary: 'Lessons from coordinating 1,856 MSEDCL and 987 MEDA solar pump installations—structuring BOM readiness, vendor dispatch, and SCADA/RMS commissioning logs.',
+        readTime: '4 MIN READ',
+        tags: ['PM-KUSUM', 'EPC Control', 'SCADA/RMS'],
+        points: [
+          'Distributed solar pump programs fail when material dispatch and site-readiness logs live in separate spreadsheets.',
+          'Using a single site-ID key across BOM, logistics, installation, and RMS verification eliminates reconciliation blind spots.',
+          'Daily exception reporting surfaces stalled sites before inspection windows close.'
+        ]
+      },
+      {
+        index: '02',
+        date: 'OCT 2026 · DATA & SQL',
+        title: 'Bridging Zoho Projects, Python ETL & PostgreSQL for Solar MIS',
+        summary: 'How a 5-stage automated pipeline replaces manual copy-paste reporting with auditable SQL views and live Zoho Analytics KPIs.',
+        readTime: '5 MIN READ',
+        tags: ['PostgreSQL', 'Python ETL', 'Zoho Analytics'],
+        points: [
+          'Python validation scripts catch missing milestone dates and status typos before data reaches the warehouse.',
+          'Normalized PostgreSQL tables allow instant slicing across B2B, B2C, and B2G solar verticals.',
+          'Executive dashboards in Zoho Analytics stay synchronized with actual site progress.'
+        ]
+      },
+      {
+        index: '03',
+        date: 'OCT 2026 · AI WORKFLOWS',
+        title: 'Using Claude AI & ChatGPT for Schedule Deviation Intelligence',
+        summary: 'Turning planned-vs-actual variance tables into actionable weekly risk briefs for utility-scale solar plants like SERP (26 MW) and MSKPY (9 MW).',
+        readTime: '3 MIN READ',
+        tags: ['Claude AI', 'ChatGPT', 'Project Control'],
+        points: [
+          'Structured prompts convert raw task-dependency exports into prioritized bottleneck summaries.',
+          'Project coordinators spend less time formatting status slides and more time unblocking field teams.',
+          'Combining deterministic SQL metrics with AI synthesis gives leadership both precision and speed.'
+        ]
+      }
+    ];
+
+    let activePage = 'about';
+    let activeFilter = 'all';
+    let activeStage = '01';
+    let activeSkillCat = 'ALL';
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2600);
+    }
+
+    function copyText(text, successMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(() => fallbackCopy(text, successMsg));
+      } else {
+        fallbackCopy(text, successMsg);
+      }
+    }
+
+    function fallbackCopy(text, successMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg);
+      } catch (e) {
+        showToast('Copy unavailable — use mailto link');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function navigateToPage(pageId, scrollToTop = true) {
+      if (!PAGES.includes(pageId)) pageId = 'about';
+      activePage = pageId;
+
+      document.querySelectorAll('.page-view').forEach((el) => {
+        el.classList.toggle('active', el.dataset.pageId === pageId);
+      });
+
+      document.querySelectorAll('header nav .nav-link').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.page === pageId);
+      });
+
+      document.querySelectorAll('.mobile-nav-link').forEach((btn) => {
+        const isCurrent = btn.dataset.page === pageId;
+        btn.classList.toggle('text-ink', isCurrent);
+        btn.classList.toggle('text-muted', !isCurrent);
+      });
+
+      const idx = PAGES.indexOf(pageId);
+      document.getElementById('pageIndicatorLabel').textContent = `0${idx + 1} / 0${PAGES.length} · ${pageId.toUpperCase()}`;
+
+      const prevBtn = document.getElementById('prevPageBtn');
+      const nextBtn = document.getElementById('nextPageBtn');
+      prevBtn.disabled = idx === 0;
+      prevBtn.classList.toggle('opacity-40', idx === 0);
+      prevBtn.classList.toggle('pointer-events-none', idx === 0);
+      nextBtn.disabled = idx === PAGES.length - 1;
+      nextBtn.classList.toggle('opacity-40', idx === PAGES.length - 1);
+      nextBtn.classList.toggle('pointer-events-none', idx === PAGES.length - 1);
+
+      if (window.location.hash !== `#/${pageId}`) {
+        history.replaceState(null, '', `#/${pageId}`);
+      }
+
+      if (scrollToTop) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      setTimeout(updateScrollProgress, 60);
+    }
+
+    function runPreloader() {
+      const preloader = document.getElementById('preloader');
+      const pctEl = document.getElementById('loaderPct');
+      const barEl = document.getElementById('loaderBar');
+      let p = 0;
+      const timer = setInterval(() => {
+        p += 14;
+        if (p >= 100) {
+          p = 100;
+          clearInterval(timer);
+          setTimeout(() => preloader.classList.add('done'), 120);
+        }
+        pctEl.textContent = `${String(p).padStart(3, '0')}%`;
+        barEl.style.width = `${p}%`;
+      }, 30);
+    }
+
+    function animateCounters() {
+      document.querySelectorAll('.count-up').forEach((el) => {
+        const target = parseFloat(el.dataset.target);
+        const decimals = parseInt(el.dataset.decimals || '0', 10);
+        const useComma = el.dataset.comma === 'true';
+        const duration = 900;
+        const start = performance.now();
+        function frame(now) {
+          const t = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          const val = target * eased;
+          let formatted = decimals > 0 ? val.toFixed(decimals) : Math.round(val).toString();
+          if (useComma) {
+            formatted = Number(formatted).toLocaleString('en-US');
+          }
+          el.textContent = formatted;
+          if (t < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    function initBlackHoleBackground() {
+      const canvas = document.getElementById('bgCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let width = 0;
+      let height = 0;
+      let dpr = Math.min(window.devicePixelRatio || 1, 2);
+      let rafId = null;
+      let targetX = 0.72;
+      let targetY = 0.34;
+      let currentX = 0.72;
+      let currentY = 0.34;
+
+      const particles = [];
+      const PARTICLE_COUNT = 165;
+
+      function createParticle() {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 85 + Math.pow(Math.random(), 0.85) * 420;
+        const speed = (0.0018 + (160 / (radius + 40)) * 0.0032) * (Math.random() > 0.12 ? 1 : -0.6);
+        return {
+          angle,
+          radius,
+          speed,
+          size: 0.7 + Math.random() * 1.5,
+          alpha: 0.18 + Math.random() * 0.55,
+          tilt: 0.42 + (Math.random() - 0.5) * 0.08,
+          isSage: Math.random() > 0.52
+        };
+      }
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(createParticle());
+      }
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      window.addEventListener('resize', resize);
+      window.addEventListener('mousemove', (e) => {
+        if (width > 0 && height > 0) {
+          targetX = 0.66 + (e.clientX / width - 0.5) * 0.08;
+          targetY = 0.34 + (e.clientY / height - 0.5) * 0.08;
+        }
+      }, { passive: true });
+
+      resize();
+
+      function drawFrame(time) {
+        ctx.clearRect(0, 0, width, height);
+        currentX += (targetX - currentX) * 0.04;
+        currentY += (targetY - currentY) * 0.04;
+
+        const scrollShift = Math.min(180, (window.scrollY || 0) * 0.08);
+        const cx = width * currentX;
+        const cy = height * currentY - scrollShift * 0.35;
+        const t = time * 0.001;
+
+        const outerHalo = ctx.createRadialGradient(cx, cy, 42, cx, cy, 360);
+        outerHalo.addColorStop(0, 'rgba(163, 184, 174, 0.14)');
+        outerHalo.addColorStop(0.32, 'rgba(163, 184, 174, 0.055)');
+        outerHalo.addColorStop(0.68, 'rgba(244, 244, 240, 0.018)');
+        outerHalo.addColorStop(1, 'rgba(5, 5, 5, 0)');
+        ctx.fillStyle = outerHalo;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 360, 0, Math.PI * 2);
+        ctx.fill();
+
+        const ringRadii = [110, 165, 235, 320];
+        ringRadii.forEach((r, idx) => {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(-0.24 + Math.sin(t * 0.25 + idx) * 0.03);
+          ctx.scale(1, 0.42);
+          ctx.beginPath();
+          ctx.arc(0, 0, r, 0, Math.PI * 2);
+          ctx.strokeStyle = idx % 2 === 0 ? 'rgba(163, 184, 174, 0.13)' : 'rgba(255, 255, 255, 0.06)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash(idx === 1 ? [4, 8] : [2, 6]);
+          ctx.lineDashOffset = -t * (12 + idx * 4);
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          if (!reducedMotion) {
+            p.angle += p.speed;
+            p.radius -= 0.09;
+            if (p.radius < 54) {
+              particles[i] = createParticle();
+              particles[i].radius = 340 + Math.random() * 140;
+            }
+          }
+          const rot = -0.24;
+          const lx = Math.cos(p.angle) * p.radius;
+          const ly = Math.sin(p.angle) * p.radius * p.tilt;
+          const px = cx + lx * Math.cos(rot) - ly * Math.sin(rot);
+          const py = cy + lx * Math.sin(rot) + ly * Math.cos(rot);
+
+          const fadeNearCore = Math.min(1, (p.radius - 54) / 35);
+          const alpha = p.alpha * fadeNearCore;
+          ctx.fillStyle = p.isSage
+            ? `rgba(163, 184, 174, ${alpha.toFixed(3)})`
+            : `rgba(244, 244, 240, ${(alpha * 0.85).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.arc(px, py, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 56, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(163, 184, 174, 0.48)';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 52, 0, Math.PI * 2);
+        ctx.fillStyle = '#030303';
+        ctx.fill();
+
+        if (!reducedMotion) {
+          rafId = requestAnimationFrame(drawFrame);
+        }
+      }
+
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(drawFrame);
+    }
+
+    function renderMissions() {
+      const list = document.getElementById('missionsList');
+      const counter = document.getElementById('missionCounter');
+      const filtered = activeFilter === 'all'
+        ? MISSIONS
+        : MISSIONS.filter((m) => m.category === activeFilter);
+
+      const paddedCount = String(filtered.length).padStart(2, '0');
+      counter.textContent = `SHOWING ${paddedCount} / 07 MISSIONS`;
+
+      list.innerHTML = filtered.map((m) => {
+        const metaEntries = Object.entries(m.meta).map(([k, v]) => `
+          <div>
+            <div class="font-mono-label text-[10px] text-muted">${k}</div>
+            <div class="mt-0.5 text-xs text-zinc-200">${v}</div>
+          </div>
+        `).join('');
+
+        const tagPills = m.tags.map((t) => `
+          <span class="border border-hairline px-2.5 py-1 font-mono-label text-[10px] text-zinc-300">${t}</span>
+        `).join('');
+
+        return `
+          <article class="mission-row py-7 sm:py-9 px-2 sm:px-3 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+            <div class="lg:col-span-1">
+              <span class="row-index font-mono text-sm sm:text-base text-muted">${m.index}</span>
+            </div>
+
+            <div class="lg:col-span-5 flex flex-col justify-between gap-4">
+              <div>
+                <p class="font-mono-label text-[10px] text-sage">${m.eyebrow}</p>
+                <h3 class="mt-2 text-xl sm:text-2xl font-medium tracking-tight text-ink">${m.title}</h3>
+                <p class="mt-2 text-sm text-zinc-400 leading-relaxed">${m.subtitle}</p>
+              </div>
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                ${tagPills}
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 flex flex-col justify-between gap-5">
+              <p class="text-sm text-zinc-300 leading-relaxed">${m.narrative}</p>
+              <div class="grid grid-cols-2 gap-x-6 gap-y-3 border-t border-hairline pt-4">
+                ${metaEntries}
+              </div>
+              <div class="pt-1">
+                <button type="button" class="open-mission-btn font-mono-label text-[11px] text-ink hover:text-sage transition-colors inline-flex items-center gap-1.5" data-index="${m.index}">
+                  VIEW DOSSIER →
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderPipeline() {
+      const tabsEl = document.getElementById('pipelineTabs');
+      const detailEl = document.getElementById('pipelineDetail');
+
+      document.querySelectorAll('#pipelineSchematic .schematic-node').forEach((node) => {
+        const rect = node.querySelector('rect');
+        const isCurrent = node.dataset.stage === activeStage;
+        rect.setAttribute('stroke', isCurrent ? '#A3B8AE' : '#27272A');
+        rect.setAttribute('fill', isCurrent ? '#141917' : '#0B0B0B');
+      });
+
+      tabsEl.innerHTML = PIPELINE_STAGES.map((s) => {
+        const isActive = s.num === activeStage;
+        return `
+          <button type="button" class="stage-tab p-4 text-left ${isActive ? 'active' : ''}" data-stage="${s.num}">
+            <div class="stage-eyebrow font-mono-label text-[10px] ${isActive ? 'text-zinc-600' : 'text-sage'}">STAGE ${s.num} · ${s.phase}</div>
+            <div class="mt-1.5 text-sm font-medium">${s.title}</div>
+            <div class="mt-0.5 text-xs ${isActive ? 'text-zinc-700' : 'text-muted'}">${s.short}</div>
+          </button>
+        `;
+      }).join('');
+
+      const current = PIPELINE_STAGES.find((s) => s.num === activeStage) || PIPELINE_STAGES[0];
+      detailEl.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-7">
+            <p class="font-mono-label text-[10px] text-sage">STAGE ${current.num} · ${current.phase}</p>
+            <h3 class="mt-1.5 text-lg sm:text-xl font-medium text-ink">${current.detailTitle}</h3>
+            <p class="mt-2.5 text-sm text-zinc-300 leading-relaxed">${current.detailBody}</p>
+            <div class="mt-4 flex flex-wrap gap-1.5">
+              ${current.tags.map((t) => `<span class="border border-hairline px-2.5 py-1 font-mono-label text-[10px] text-zinc-300">${t}</span>`).join('')}
+            </div>
+          </div>
+          <div class="lg:col-span-5 grid grid-cols-1 gap-3 border-t lg:border-t-0 lg:border-l border-hairline pt-4 lg:pt-0 lg:pl-6">
+            <div>
+              <div class="font-mono-label text-[10px] text-muted">INPUTS</div>
+              <div class="mt-1 text-xs sm:text-sm text-zinc-200">${current.inputs}</div>
+            </div>
+            <div class="border-t border-hairline pt-3">
+              <div class="font-mono-label text-[10px] text-muted">OUTPUT</div>
+              <div class="mt-1 text-xs sm:text-sm text-zinc-200">${current.output}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderExperience() {
+      const expEl = document.getElementById('experienceList');
+      expEl.innerHTML = EXPERIENCE.map((e) => `
+        <article class="mission-row py-7 sm:py-8 px-2 sm:px-3 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          <div class="lg:col-span-1">
+            <span class="row-index font-mono text-sm sm:text-base text-muted">${e.index}</span>
+          </div>
+          <div class="lg:col-span-5">
+            <p class="font-mono-label text-[10px] text-sage">${e.period}</p>
+            <h3 class="mt-2 text-lg sm:text-xl font-medium text-ink">${e.role}</h3>
+            <p class="mt-1.5 text-sm text-zinc-400">${e.company}</p>
+            <div class="mt-4 flex flex-wrap gap-1.5">
+              ${e.tags.map((t) => `<span class="border border-hairline px-2.5 py-1 font-mono-label text-[10px] text-zinc-300">${t}</span>`).join('')}
+            </div>
+          </div>
+          <div class="lg:col-span-6">
+            <ul class="space-y-2.5 text-sm text-zinc-300 leading-relaxed list-disc pl-4">
+              ${e.bullets.map((b) => `<li>${b}</li>`).join('')}
+            </ul>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderSkills() {
+      const tabsEl = document.getElementById('skillTabs');
+      const gridEl = document.getElementById('skillsGrid');
+      const categories = ['ALL', ...Object.keys(SKILLS)];
+
+      tabsEl.innerHTML = categories.map((cat) => {
+        const active = cat === activeSkillCat;
+        return `
+          <button type="button" class="filter-btn ${active ? 'active' : ''} px-3.5 py-2 font-mono-label text-[11px]" data-skill-cat="${cat}">
+            ${cat.toUpperCase()}
+          </button>
+        `;
+      }).join('');
+
+      const items = activeSkillCat === 'ALL'
+        ? Object.entries(SKILLS).flatMap(([cat, list]) => list.map((name) => ({ cat, name })))
+        : (SKILLS[activeSkillCat] || []).map((name) => ({ cat: activeSkillCat, name }));
+
+      gridEl.innerHTML = items.map((item) => `
+        <span class="border border-hairline bg-surface/70 px-3 py-1.5 font-mono text-xs text-zinc-200 hover:border-sage transition-colors" title="${item.cat}">
+          ${item.name}
+        </span>
+      `).join('');
+    }
+
+    function renderBlogs() {
+      const blogsEl = document.getElementById('blogsList');
+      blogsEl.innerHTML = BLOGS.map((b) => `
+        <article class="mission-row py-7 sm:py-8 px-2 sm:px-3 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          <div class="lg:col-span-1">
+            <span class="row-index font-mono text-sm sm:text-base text-muted">${b.index}</span>
+          </div>
+          <div class="lg:col-span-5">
+            <p class="font-mono-label text-[10px] text-sage">${b.date}</p>
+            <h3 class="mt-2 text-lg sm:text-xl font-medium text-ink">${b.title}</h3>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              ${b.tags.map((t) => `<span class="border border-hairline px-2.5 py-1 font-mono-label text-[10px] text-zinc-300">${t}</span>`).join('')}
+            </div>
+          </div>
+          <div class="lg:col-span-6 flex flex-col justify-between gap-4">
+            <p class="text-sm text-zinc-300 leading-relaxed">${b.summary}</p>
+            <div class="flex items-center justify-between border-t border-hairline pt-3">
+              <span class="font-mono-label text-[10px] text-muted">${b.readTime}</span>
+              <button type="button" class="open-blog-btn font-mono-label text-[11px] text-ink hover:text-sage transition-colors" data-blog-index="${b.index}">
+                READ ARTICLE →
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function openMissionModal(index) {
+      const m = MISSIONS.find((item) => item.index === index);
+      if (!m) return;
+      document.getElementById('modalEyebrow').textContent = `MISSION ${m.index} · ${m.eyebrow}`;
+      document.getElementById('modalTitle').textContent = m.title;
+      document.getElementById('modalSummary').textContent = m.narrative;
+      document.getElementById('modalMeta').innerHTML = Object.entries(m.meta).map(([k, v]) => `
+        <div>
+          <div class="font-mono-label text-[10px] text-muted">${k}</div>
+          <div class="mt-0.5 text-xs sm:text-sm text-ink">${v}</div>
+        </div>
+      `).join('');
+      document.getElementById('modalListHeading').textContent = 'KEY EXECUTION HIGHLIGHTS';
+      document.getElementById('modalHighlights').innerHTML = m.highlights.map((h) => `<li>${h}</li>`).join('');
+      document.getElementById('modalTags').innerHTML = m.tags.map((t) => `
+        <span class="border border-hairline px-2.5 py-1 font-mono-label text-[10px] text-sage">${t}</span>
+      `).join('');
+      document.getElementById('missionModal').classList.remove('hidden');
+    }
+
+    function openBlogModal(index) {
+      const b = BLOGS.find((item) => item.index === index);
+      if (!b) return;
+      document.getElementById('modalEyebrow').textContent = `FIELD NOTE ${b.index} · ${b.date}`;
+      document.getElementById('modalTitle').textContent = b.title;
+      document.getElementById('modalSummary').textContent = b.summary;
+      document.getElementById('modalMeta').innerHTML = `
+        <div>
+          <div class="font-mono-label text-[10px] text-muted">AUTHOR</div>
+          <div class="mt-0.5 text-xs sm:text-sm text-ink">Swaraj Kumar Padhi</div>
+        </div>
+        <div>
+          <div class="font-mono-label text-[10px] text-muted">READING TIME</div>
+          <div class="mt-0.5 text-xs sm:text-sm text-ink">${b.readTime}</div>
+        </div>
+      `;
+      document.getElementById('modalListHeading').textContent = 'KEY TAKEAWAYS';
+      document.getElementById('modalHighlights').innerHTML = b.points.map((p) => `<li>${p}</li>`).join('');
+      document.getElementById('modalTags').innerHTML = b.tags.map((t) => `
+        <span class="border border-hairline px-2.5 py-1 font-mono-label text-[10px] text-sage">${t}</span>
+      `).join('');
+      document.getElementById('missionModal').classList.remove('hidden');
+    }
+
+    function updateScrollProgress() {
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY || doc.scrollTop;
+      const maxScroll = doc.scrollHeight - doc.clientHeight;
+      const pct = maxScroll > 0 ? Math.min(100, Math.max(0, Math.round((scrollTop / maxScroll) * 100))) : 0;
+      document.getElementById('scrollPct').textContent = `${String(pct).padStart(3, '0')}%`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initBlackHoleBackground();
+      runPreloader();
+      renderMissions();
+      renderPipeline();
+      renderExperience();
+      renderSkills();
+      renderBlogs();
+      animateCounters();
+
+      const hashPage = (window.location.hash || '').replace('#/', '').trim();
+      navigateToPage(PAGES.includes(hashPage) ? hashPage : 'about', false);
+
+      window.addEventListener('mousemove', (e) => {
+        document.documentElement.style.setProperty('--mx', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--my', `${e.clientY}px`);
+      }, { passive: true });
+
+      document.querySelectorAll('[data-page]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          navigateToPage(btn.dataset.page, true);
+          const mobileNav = document.getElementById('mobileNav');
+          const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+          if (!mobileNav.classList.contains('hidden')) {
+            mobileNav.classList.add('hidden');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+
+      document.getElementById('prevPageBtn').addEventListener('click', () => {
+        const idx = PAGES.indexOf(activePage);
+        if (idx > 0) navigateToPage(PAGES[idx - 1], true);
+      });
+
+      document.getElementById('nextPageBtn').addEventListener('click', () => {
+        const idx = PAGES.indexOf(activePage);
+        if (idx < PAGES.length - 1) navigateToPage(PAGES[idx + 1], true);
+      });
+
+      document.getElementById('filterBar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.filter-btn');
+        if (!btn) return;
+        activeFilter = btn.dataset.filter;
+        document.querySelectorAll('#filterBar .filter-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderMissions();
+      });
+
+      document.getElementById('missionsList').addEventListener('click', (e) => {
+        const btn = e.target.closest('.open-mission-btn');
+        if (btn) openMissionModal(btn.dataset.index);
+      });
+
+      document.getElementById('blogsList').addEventListener('click', (e) => {
+        const btn = e.target.closest('.open-blog-btn');
+        if (btn) openBlogModal(btn.dataset.blogIndex);
+      });
+
+      document.getElementById('pipelineTabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.stage-tab');
+        if (!tab) return;
+        activeStage = tab.dataset.stage;
+        renderPipeline();
+      });
+
+      document.getElementById('pipelineSchematic').addEventListener('click', (e) => {
+        const node = e.target.closest('.schematic-node');
+        if (!node) return;
+        activeStage = node.dataset.stage;
+        renderPipeline();
+      });
+
+      document.getElementById('skillTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.filter-btn');
+        if (!btn) return;
+        activeSkillCat = btn.dataset.skillCat;
+        renderSkills();
+      });
+
+      document.getElementById('copyEmailHeroBtn').addEventListener('click', () => {
+        copyText('swarajkumarpadhi002@gmail.com', 'Email copied: swarajkumarpadhi002@gmail.com');
+      });
+
+      document.getElementById('copyEmailFooterBtn').addEventListener('click', () => {
+        copyText('swarajkumarpadhi002@gmail.com', 'Email copied: swarajkumarpadhi002@gmail.com');
+      });
+
+      document.getElementById('scrollTopBtn').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileNav = document.getElementById('mobileNav');
+      mobileMenuBtn.addEventListener('click', () => {
+        const isHidden = mobileNav.classList.toggle('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', String(!isHidden));
+      });
+
+      const missionModal = document.getElementById('missionModal');
+      document.getElementById('closeMissionModalBtn').addEventListener('click', () => {
+        missionModal.classList.add('hidden');
+      });
+      missionModal.addEventListener('click', (e) => {
+        if (e.target === missionModal) missionModal.classList.add('hidden');
+      });
+
+      const contactModal = document.getElementById('contactModal');
+      document.getElementById('openContactModalBtn').addEventListener('click', () => {
+        contactModal.classList.remove('hidden');
+      });
+      document.getElementById('closeContactModalBtn').addEventListener('click', () => {
+        contactModal.classList.add('hidden');
+      });
+      contactModal.addEventListener('click', (e) => {
+        if (e.target === contactModal) contactModal.classList.add('hidden');
+      });
+
+      document.getElementById('contactForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('senderName').value.trim();
+        const topic = document.getElementById('senderTopic').value;
+        const msg = document.getElementById('senderMessage').value.trim();
+        const subject = encodeURIComponent(`[Portfolio Inquiry] ${topic} — ${name}`);
+        const body = encodeURIComponent(`Hi Swaraj,\n\n${msg}\n\nBest regards,\n${name}`);
+        window.location.href = `mailto:swarajkumarpadhi002@gmail.com?subject=${subject}&body=${body}`;
+        contactModal.classList.add('hidden');
+        showToast('Opening email client...');
+      });
+
+      document.getElementById('copyInquiryBtn').addEventListener('click', () => {
+        const name = document.getElementById('senderName').value.trim() || 'Visitor';
+        const topic = document.getElementById('senderTopic').value;
+        const msg = document.getElementById('senderMessage').value.trim() || '(No message entered)';
+        copyText(`To: swarajkumarpadhi002@gmail.com\nSubject: ${topic} — ${name}\n\n${msg}`, 'Inquiry brief copied to clipboard');
+      });
+
+      window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    });
+  </script>
+</body>
+</html>
