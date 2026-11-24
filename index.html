@@ -377,7 +377,7 @@
               </div>
               <div class="p-3.5">
                 <div class="font-mono-label text-[10px] text-sage">PUMP EPC</div>
-                <div class="mt-1 text-lg font-medium text-ink"><span class="count-up" data-target="5.13" data-decimals="2">5.13</span> MW</div>
+                <div class="mt-1 text-lg font-medium text-ink"><span class="count-up" data-target="5">5</span> MW</div>
                 <div class="mt-0.5 text-[11px] text-muted">3 HP &amp; 5 HP Capacity</div>
               </div>
               <div class="p-3.5">
@@ -806,6 +806,10 @@
           <input id="senderName" type="text" required placeholder="e.g. Project Director" class="w-full border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink placeholder-zinc-600 focus:border-sage focus:outline-none" />
         </div>
         <div>
+          <label for="senderEmail" class="block font-mono-label text-[10px] text-muted mb-1.5">YOUR EMAIL (OPTIONAL)</label>
+          <input id="senderEmail" type="email" placeholder="you@company.com" class="w-full border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink placeholder-zinc-600 focus:border-sage focus:outline-none" />
+        </div>
+        <div>
           <label for="senderTopic" class="block font-mono-label text-[10px] text-muted mb-1.5">TOPIC</label>
           <select id="senderTopic" class="w-full border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-sage focus:outline-none">
             <option value="Solar EPC Project Control">Solar EPC Project Control</option>
@@ -902,11 +906,11 @@
         category: 'epc',
         eyebrow: 'SOLAR EPC · 2025 — 2026',
         title: 'MSEDCL & MEDA PM-KUSUM Solar Pumps',
-        subtitle: 'Site-wise EPC coordination across 2,843 solar water pump installations (5.13 MW)',
+        subtitle: 'Site-wise EPC coordination across 2,843 solar water pump installations (5 MW)',
         narrative: 'Coordinated end-to-end EPC execution at Group Surya for 1,856 MSEDCL sites (3.33 MW) and 987 MEDA sites (1.8 MW), spanning BOM planning, vendor logistics, commissioning, and SCADA/RMS support.',
         meta: {
           STRUCTURE: 'Group Surya (Surya International)',
-          SCALE: '2,843 Sites · 5.13 MW (3 HP & 5 HP)',
+          SCALE: '2,843 Sites · 5 MW (3 HP & 5 HP)',
           DELIVERABLES: 'BOM, Logistics, Commissioning, RMS',
           LOCATION: 'Bhubaneswar / Maharashtra'
         },
@@ -1747,13 +1751,36 @@
         if (e.target === contactModal) contactModal.classList.add('hidden');
       });
 
-      document.getElementById('contactForm').addEventListener('submit', (e) => {
+      // Set your deployed FastAPI backend HTTPS URL here (e.g. 'https://swaraj-portfolio-api.onrender.com')
+      const API_BASE_URL = '';
+
+      document.getElementById('contactForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('senderName').value.trim();
+        const email = document.getElementById('senderEmail').value.trim();
         const topic = document.getElementById('senderTopic').value;
         const msg = document.getElementById('senderMessage').value.trim();
+
+        if (API_BASE_URL) {
+          try {
+            const res = await fetch(`${API_BASE_URL}/api/contact`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, email: email || null, topic, message: msg })
+            });
+            if (res.ok) {
+              contactModal.classList.add('hidden');
+              document.getElementById('contactForm').reset();
+              showToast('Inquiry submitted to backend API');
+              return;
+            }
+          } catch (err) {
+            // Fall back to mailto if backend is unreachable
+          }
+        }
+
         const subject = encodeURIComponent(`[Portfolio Inquiry] ${topic} — ${name}`);
-        const body = encodeURIComponent(`Hi Swaraj,\n\n${msg}\n\nBest regards,\n${name}`);
+        const body = encodeURIComponent(`Hi Swaraj,\n\n${msg}\n\nFrom: ${name}${email ? ' (' + email + ')' : ''}`);
         window.location.href = `mailto:swarajkumarpadhi002@gmail.com?subject=${subject}&body=${body}`;
         contactModal.classList.add('hidden');
         showToast('Opening email client...');
